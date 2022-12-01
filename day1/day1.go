@@ -1,14 +1,15 @@
-package main
+package day1
 
 import (
 	"advent-of-code-2022/utils"
 	"fmt"
-	"log"
-	"strconv"
 )
 
-func main() {
-	lines := utils.ReadLines("calories.txt")
+type Puzzle struct{}
+
+// Solve solves day 1's puzzles
+func (Puzzle) Solve() {
+	lines := utils.ReadLines("day1/calories.txt")
 
 	maxCalories := solvePart1(lines)
 	topThree := solvePart2(lines)
@@ -27,7 +28,7 @@ func solvePart1(lines []string) int {
 			}
 			totalCalories = 0
 		} else {
-			totalCalories += convertToInt(line)
+			totalCalories += utils.ConvertToInt(line)
 		}
 	}
 
@@ -42,7 +43,7 @@ func solvePart2(lines []string) int {
 			compareTopThree(totalCalories, topThree)
 			totalCalories = 0
 		} else {
-			totalCalories += convertToInt(line)
+			totalCalories += utils.ConvertToInt(line)
 		}
 	}
 	compareTopThree(totalCalories, topThree)
@@ -61,12 +62,4 @@ func compareTopThree(totalCalories int, topThree []int) {
 	} else if totalCalories > topThree[2] {
 		topThree[2] = totalCalories
 	}
-}
-
-func convertToInt(line string) int {
-	calories, err := strconv.Atoi(line)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return calories
 }
