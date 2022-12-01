@@ -22,10 +22,10 @@ var lines = []string{
 	"10000",
 }
 
-func TestPart1(t *testing.T) {
+func TestSolvePart1(t *testing.T) {
 	assert.Equal(t, 24000, solvePart1(lines))
 }
 
-func TestPart2(t *testing.T) {
+func TestSolvePart2(t *testing.T) {
 	assert.Equal(t, 45000, solvePart2(lines))
 }
