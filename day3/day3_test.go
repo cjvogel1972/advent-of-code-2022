@@ -5,10 +5,19 @@ import (
 	"testing"
 )
 
+var lines = []string{
+	"vJrwpWtwJgWrhcsFMMfFFhFp",
+	"jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+	"PmmdzqPrVvPwwTWBwg",
+	"wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+	"ttgJtRGJQctTZtZT",
+	"CrZsJsPPZsGzwwsLwLmpwMDw",
+}
+
 func TestPart1(t *testing.T) {
-	assert.Equal(t, 0, solvePart1())
+	assert.Equal(t, 157, solvePart1(lines))
 }
 
 func TestPart2(t *testing.T) {
-	assert.Equal(t, 0, solvePart2())
+	assert.Equal(t, 70, solvePart2(lines))
 }
