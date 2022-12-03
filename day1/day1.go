@@ -11,11 +11,8 @@ type Puzzle struct{}
 func (Puzzle) Solve() {
 	lines := utils.ReadLines("day1/calories.txt")
 
-	maxCalories := solvePart1(lines)
-	topThree := solvePart2(lines)
-
-	fmt.Printf("Part 1: %d\n", maxCalories)
-	fmt.Printf("Part 2: %d\n", topThree)
+	fmt.Printf("Part 1: %d\n", solvePart1(lines))
+	fmt.Printf("Part 2: %d\n", solvePart2(lines))
 }
 
 func solvePart1(lines []string) int {
