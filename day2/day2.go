@@ -26,7 +26,7 @@ var elfShapeMap = map[string]string{
 
 // Solve solves day 2's puzzles
 func (Puzzle) Solve() {
-	lines := utils.ReadLines("day2/day2-input.txt")
+	lines := utils.ReadLines("day2/guide.txt")
 
 	fmt.Printf("Part 1: %d\n", solvePart1(lines))
 	fmt.Printf("Part 2: %d\n", solvePart2(lines))
