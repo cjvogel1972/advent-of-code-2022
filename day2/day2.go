@@ -13,9 +13,9 @@ const tieScore = 3
 const loseScore = 0
 
 var shapes = map[string]play{
-	"rock":     play{"rock", "scissors", "paper", 1},
-	"paper":    play{"paper", "rock", "scissors", 2},
-	"scissors": play{"scissors", "paper", "rock", 3},
+	"rock":     {"rock", "scissors", "paper", 1},
+	"paper":    {"paper", "rock", "scissors", 2},
+	"scissors": {"scissors", "paper", "rock", 3},
 }
 
 var elfShapeMap = map[string]string{
