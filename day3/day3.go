@@ -9,7 +9,7 @@ import (
 
 type Puzzle struct{}
 
-// Solve solves day 2's puzzles
+// Solve solves day 3's puzzles
 func (Puzzle) Solve() {
 	lines := utils.ReadLines("day3/sacks.txt")
 
@@ -19,19 +19,19 @@ func (Puzzle) Solve() {
 
 func solvePart1(sacks []string) int {
 	totalPriority := 0
-	for _, sack := range sacks {
-		numItems := len(sack)
-		compartment1 := sack[0 : numItems/2]
-		compartment2 := sack[(numItems / 2):numItems]
-		var dupItem rune
-		for _, item := range compartment1 {
-			if strings.ContainsRune(compartment2, item) {
-				dupItem = item
+	for _, sackItems := range sacks {
+		breakpoint := len(sackItems) / 2
+		compartment1Items := sackItems[:breakpoint]
+		compartment2Items := sackItems[breakpoint:]
+		var misplacedItem rune
+		for _, item := range compartment1Items {
+			if strings.ContainsRune(compartment2Items, item) {
+				misplacedItem = item
 				break
 			}
 		}
 
-		totalPriority += computePriority(dupItem)
+		totalPriority += itemPriority(misplacedItem)
 	}
 
 	return totalPriority
@@ -48,13 +48,13 @@ func solvePart2(sacks []string) int {
 			}
 		}
 
-		totalPriority += computePriority(badge)
+		totalPriority += itemPriority(badge)
 	}
 
 	return totalPriority
 }
 
-func computePriority(item rune) int {
+func itemPriority(item rune) int {
 	if unicode.IsLower(item) {
 		return int(item - 'a' + 1)
 	} else {
