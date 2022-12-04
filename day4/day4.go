@@ -46,7 +46,7 @@ func solvePart2(lines []string) int {
 
 func newAssignment(sectionRange string) assignment {
 	sections := strings.Split(sectionRange, "-")
-	return assignment{utils.ConvertToInt(sections[0]), utils.ConvertToInt(sections[1])}
+	return assignment{utils.ToInt(sections[0]), utils.ToInt(sections[1])}
 }
 
 type assignment struct {
