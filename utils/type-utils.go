@@ -13,3 +13,7 @@ func ConvertToInt(s string) int {
 	}
 	return i
 }
+
+func InBetween(i int, min int, max int) bool {
+	return min <= i && i <= max
+}
