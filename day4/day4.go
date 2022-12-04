@@ -3,6 +3,7 @@ package day4
 import (
 	"advent-of-code-2022/utils"
 	"fmt"
+	"strings"
 )
 
 type Puzzle struct{}
@@ -16,9 +17,55 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(lines []string) int {
-	return 0
+	totalOverlaps := 0
+	for _, pair := range lines {
+		assignments := strings.Split(pair, ",")
+		elf1 := newAssignment(assignments[0])
+		elf2 := newAssignment(assignments[1])
+		if elf1.completeOverlap(elf2) || elf2.completeOverlap(elf1) {
+			totalOverlaps++
+		}
+	}
+
+	return totalOverlaps
 }
 
 func solvePart2(lines []string) int {
-	return 0
+	someOverlaps := 0
+	for _, pair := range lines {
+		assignments := strings.Split(pair, ",")
+		elf1 := newAssignment(assignments[0])
+		elf2 := newAssignment(assignments[1])
+		if elf1.overlap(elf2) || elf2.overlap(elf1) {
+			someOverlaps++
+		}
+	}
+
+	return someOverlaps
+}
+
+func newAssignment(sectionRange string) assignment {
+	sections := strings.Split(sectionRange, "-")
+	return assignment{utils.ConvertToInt(sections[0]), utils.ConvertToInt(sections[1])}
+}
+
+type assignment struct {
+	start int
+	end   int
+}
+
+func (a assignment) completeOverlap(other assignment) bool {
+	if a.start <= other.start && a.end >= other.end {
+		return true
+	}
+
+	return false
+}
+
+func (a assignment) overlap(other assignment) bool {
+	if (a.start <= other.start && a.end >= other.start) || (a.start <= other.end && a.end >= other.end) {
+		return true
+	}
+
+	return false
 }
