@@ -65,7 +65,7 @@ var puzzles = []Puzzle{
 
 func main() {
 	if len(os.Args) > 1 {
-		day := utils.ConvertToInt(os.Args[1]) - 1
+		day := utils.ToInt(os.Args[1]) - 1
 		puzzles[day].Solve()
 	} else {
 		for i, puzzle := range puzzles {

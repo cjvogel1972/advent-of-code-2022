@@ -25,7 +25,7 @@ func solvePart1(lines []string) int {
 			}
 			totalCalories = 0
 		} else {
-			totalCalories += utils.ConvertToInt(line)
+			totalCalories += utils.ToInt(line)
 		}
 	}
 
@@ -40,7 +40,7 @@ func solvePart2(lines []string) int {
 			compareTopThree(totalCalories, topThree)
 			totalCalories = 0
 		} else {
-			totalCalories += utils.ConvertToInt(line)
+			totalCalories += utils.ToInt(line)
 		}
 	}
 	compareTopThree(totalCalories, topThree)
