@@ -24,3 +24,27 @@ func TestPart1(t *testing.T) {
 func TestPart2(t *testing.T) {
 	assert.Equal(t, "MCD", solvePart2(lines))
 }
+
+func TestParseCrates(t *testing.T) {
+	crates, linesRead := parseCrates(lines)
+
+	assert.Equal(t, 5, linesRead)
+	assert.Equal(t, 3, len(crates))
+	assert.Equal(t, 2, len(crates[0]))
+	assert.Equal(t, 3, len(crates[1]))
+	assert.Equal(t, 1, len(crates[2]))
+}
+
+func TestParseAction(t *testing.T) {
+	numCratesToMove, fromColumn, toColumn := parseAction(lines[5])
+
+	assert.Equal(t, 1, numCratesToMove)
+	assert.Equal(t, 1, fromColumn)
+	assert.Equal(t, 0, toColumn)
+}
+
+func TestGetTopCrates(t *testing.T) {
+	crates, _ := parseCrates(lines)
+
+	assert.Equal(t, "NDP", getTopCrates(crates))
+}
