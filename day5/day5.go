@@ -17,59 +17,56 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(lines []string) string {
-	startCrateStackSize := 0
-	for i := 0; len(lines[i]) > 0; i++ {
-		startCrateStackSize++
-	}
-	startCrateStackSize--
-	numColumns := utils.ToInt(lines[startCrateStackSize][len(lines[startCrateStackSize])-1:])
-	crates := make([][]string, numColumns)
-	for i := 0; i < numColumns; i++ {
-		crates[i] = make([]string, 0)
-	}
-	for i := 0; i < startCrateStackSize; i++ {
-		for j := 0; j*4 < len(lines[i]); j++ {
-			crate := lines[i][j*4 : j*4+3]
-			if strings.ContainsRune(crate, '[') {
-				crates[j] = append(crates[j], string(crate[1]))
-			}
+	crates, linesRead := parseCrates(lines)
+
+	for i := linesRead; i < len(lines); i++ {
+		numCratesToMove, fromColumn, toColumn := parseAction(lines[i])
+
+		top := make([]string, numCratesToMove)
+		for j := 0; j < numCratesToMove; j++ {
+			top[j] = crates[fromColumn][numCratesToMove-1-j]
 		}
+
+		crates[toColumn] = append(top, crates[toColumn]...)
+		crates[fromColumn] = crates[fromColumn][numCratesToMove:]
 	}
 
-	for i := startCrateStackSize + 2; i < len(lines); i++ {
-		var numCrates, column1, column2 int
-		_, err := fmt.Sscanf(lines[i], "move %d from %d to %d", &numCrates, &column1, &column2)
-		if err != nil {
-			panic(err)
-		}
-		column1--
-		column2--
-		top := make([]string, numCrates)
-		for j := 0; j < numCrates; j++ {
-			top[j] = crates[column1][numCrates-1-j]
-		}
-		crates[column2] = append(top, crates[column2]...)
-		crates[column1] = crates[column1][numCrates:]
-	}
-	topCrates := ""
-	for i := 0; i < len(crates); i++ {
-		topCrates = topCrates + crates[i][0]
-	}
-	return topCrates
+	return getTopCrates(crates)
 }
 
 func solvePart2(lines []string) string {
-	startCrateStackSize := 0
-	for i := 0; len(lines[i]) > 0; i++ {
-		startCrateStackSize++
+	crates, linesRead := parseCrates(lines)
+
+	for i := linesRead; i < len(lines); i++ {
+		numCratesToMove, fromColumn, toColumn := parseAction(lines[i])
+
+		top := make([]string, numCratesToMove)
+		for j := 0; j < numCratesToMove; j++ {
+			top[j] = crates[fromColumn][j]
+		}
+
+		crates[toColumn] = append(top, crates[toColumn]...)
+		crates[fromColumn] = crates[fromColumn][numCratesToMove:]
 	}
-	startCrateStackSize--
-	numColumns := utils.ToInt(lines[startCrateStackSize][len(lines[startCrateStackSize])-1:])
+
+	return getTopCrates(crates)
+}
+
+func parseCrates(lines []string) ([][]string, int) {
+	linesRead := 0
+	for i := 0; len(lines[i]) > 0; i++ {
+		linesRead++
+	}
+	totalLinesRead := linesRead + 1
+	linesRead--
+	numColumns := parseNumColumns(lines[linesRead])
+
 	crates := make([][]string, numColumns)
 	for i := 0; i < numColumns; i++ {
 		crates[i] = make([]string, 0)
 	}
-	for i := 0; i < startCrateStackSize; i++ {
+
+	for i := 0; i < linesRead; i++ {
 		for j := 0; j*4 < len(lines[i]); j++ {
 			crate := lines[i][j*4 : j*4+3]
 			if strings.ContainsRune(crate, '[') {
@@ -78,24 +75,33 @@ func solvePart2(lines []string) string {
 		}
 	}
 
-	for i := startCrateStackSize + 2; i < len(lines); i++ {
-		var numCrates, column1, column2 int
-		_, err := fmt.Sscanf(lines[i], "move %d from %d to %d", &numCrates, &column1, &column2)
-		if err != nil {
-			panic(err)
-		}
-		column1--
-		column2--
-		top := make([]string, numCrates)
-		for j := 0; j < numCrates; j++ {
-			top[j] = crates[column1][j]
-		}
-		crates[column2] = append(top, crates[column2]...)
-		crates[column1] = crates[column1][numCrates:]
+	return crates, totalLinesRead
+}
+
+func parseNumColumns(line string) int {
+	return utils.ToInt(line[len(line)-1:])
+}
+
+func parseAction(line string) (int, int, int) {
+	var numCratesToMove, fromColumn, toColumn int
+	_, err := fmt.Sscanf(line, "move %d from %d to %d", &numCratesToMove, &fromColumn, &toColumn)
+	if err != nil {
+		panic(err)
 	}
+
+	// adjust for slices starting at 0
+	fromColumn--
+	toColumn--
+
+	return numCratesToMove, fromColumn, toColumn
+}
+
+func getTopCrates(crates [][]string) string {
 	topCrates := ""
+
 	for i := 0; i < len(crates); i++ {
 		topCrates = topCrates + crates[i][0]
 	}
+
 	return topCrates
 }
