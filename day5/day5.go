@@ -17,10 +17,11 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(lines []string) string {
-	crates, linesRead := parseCrates(lines)
+	stacks, actions := utils.SplitFile(lines)
+	crates := parseCrates(stacks)
 
-	for i := linesRead; i < len(lines); i++ {
-		numCratesToMove, fromColumn, toColumn := parseAction(lines[i])
+	for i := 0; i < len(actions); i++ {
+		numCratesToMove, fromColumn, toColumn := parseAction(actions[i])
 		movingCrates := crates[fromColumn].popCratesReversed(numCratesToMove)
 		crates[toColumn].pushCrates(movingCrates)
 	}
@@ -29,10 +30,11 @@ func solvePart1(lines []string) string {
 }
 
 func solvePart2(lines []string) string {
-	crates, linesRead := parseCrates(lines)
+	stacks, actions := utils.SplitFile(lines)
+	crates := parseCrates(stacks)
 
-	for i := linesRead; i < len(lines); i++ {
-		numCratesToMove, fromColumn, toColumn := parseAction(lines[i])
+	for i := 0; i < len(actions); i++ {
+		numCratesToMove, fromColumn, toColumn := parseAction(actions[i])
 		movingCrates := crates[fromColumn].popCratesInOrder(numCratesToMove)
 		crates[toColumn].pushCrates(movingCrates)
 	}
@@ -89,22 +91,16 @@ func (s *crateStack) size() int {
 	return len(s.crates)
 }
 
-func parseCrates(lines []string) ([]crateStack, int) {
-	linesRead := 0
-	for i := 0; len(lines[i]) > 0; i++ {
-		linesRead++
-	}
-	totalLinesRead := linesRead + 1
-	linesRead--
-	numColumns := parseNumColumns(lines[linesRead])
+func parseCrates(lines []string) []crateStack {
+	numColumns := parseNumColumns(lines[len(lines)-1])
 
 	crates := make([]crateStack, numColumns)
 	for i := 0; i < numColumns; i++ {
 		crates[i] = newCrateStack()
 	}
 
-	// read from bottom and push crates on crates
-	for i := linesRead - 1; i >= 0; i-- {
+	// read from bottom, above footer, and push crates on stack
+	for i := len(lines) - 2; i >= 0; i-- {
 		for j := 0; j*4 < len(lines[i]); j++ {
 			entry := lines[i][j*4 : j*4+3]
 			if strings.ContainsRune(entry, '[') {
@@ -113,7 +109,7 @@ func parseCrates(lines []string) ([]crateStack, int) {
 		}
 	}
 
-	return crates, totalLinesRead
+	return crates
 }
 
 func parseNumColumns(line string) int {

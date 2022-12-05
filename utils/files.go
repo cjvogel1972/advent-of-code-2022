@@ -21,3 +21,23 @@ func ReadLines(filename string) []string {
 	}
 	return values
 }
+
+// SplitFile groups the lines of a file into two, based on a blank line
+func SplitFile(lines []string) ([]string, []string) {
+	var top = make([]string, 0)
+	linesRead := 0
+	for i := 0; len(lines[i]) > 0; i++ {
+		top = append(top, lines[i])
+		linesRead++
+	}
+
+	// take blank line into account
+	linesRead++
+
+	var bottom = make([]string, len(lines)-linesRead)
+	for i := 0; i < len(lines)-linesRead; i++ {
+		bottom[i] = lines[linesRead+i]
+	}
+
+	return top, bottom
+}

@@ -1,6 +1,7 @@
 package day5
 
 import (
+	"advent-of-code-2022/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -89,9 +90,9 @@ func TestStackSize(t *testing.T) {
 }
 
 func TestParseCrates(t *testing.T) {
-	crates, linesRead := parseCrates(lines)
+	stack, _ := utils.SplitFile(lines)
+	crates := parseCrates(stack)
 
-	assert.Equal(t, 5, linesRead)
 	assert.Equal(t, 3, len(crates))
 	assert.Equal(t, 2, crates[0].size())
 	assert.Equal(t, 3, crates[1].size())
@@ -107,7 +108,8 @@ func TestParseAction(t *testing.T) {
 }
 
 func TestGetTopCrates(t *testing.T) {
-	crates, _ := parseCrates(lines)
+	stack, _ := utils.SplitFile(lines)
+	crates := parseCrates(stack)
 
 	assert.Equal(t, "NDP", getTopCrates(crates))
 }
