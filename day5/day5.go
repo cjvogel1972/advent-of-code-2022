@@ -40,51 +40,53 @@ func solvePart2(lines []string) string {
 	return getTopCrates(crates)
 }
 
+type crate rune
+
 func newCrateStack() crateStack {
-	crates := make([]string, 0)
+	crates := make([]crate, 0)
 	return crateStack{crates}
 }
 
 type crateStack struct {
-	crates []string
+	crates []crate
 }
 
-func (c *crateStack) pushCrate(crate string) {
-	c.crates = append([]string{crate}, c.crates...)
+func (s *crateStack) pushCrate(c crate) {
+	s.crates = append([]crate{c}, s.crates...)
 }
 
-func (c *crateStack) pushCrates(crates []string) {
-	c.crates = append(crates, c.crates...)
+func (s *crateStack) pushCrates(crates []crate) {
+	s.crates = append(crates, s.crates...)
 }
 
-func (c *crateStack) popCratesInOrder(numCratesToMove int) []string {
-	top := make([]string, numCratesToMove)
+func (s *crateStack) popCratesInOrder(numCratesToMove int) []crate {
+	top := make([]crate, numCratesToMove)
 	for j := 0; j < numCratesToMove; j++ {
-		top[j] = c.crates[j]
+		top[j] = s.crates[j]
 	}
 
-	c.crates = c.crates[numCratesToMove:]
+	s.crates = s.crates[numCratesToMove:]
 
 	return top
 }
 
-func (c *crateStack) popCratesReversed(numCratesToMove int) []string {
-	top := make([]string, numCratesToMove)
+func (s *crateStack) popCratesReversed(numCratesToMove int) []crate {
+	top := make([]crate, numCratesToMove)
 	for j := 0; j < numCratesToMove; j++ {
-		top[j] = c.crates[numCratesToMove-1-j]
+		top[j] = s.crates[numCratesToMove-1-j]
 	}
 
-	c.crates = c.crates[numCratesToMove:]
+	s.crates = s.crates[numCratesToMove:]
 
 	return top
 }
 
-func (c *crateStack) topCrate() string {
-	return c.crates[0]
+func (s *crateStack) topCrate() crate {
+	return s.crates[0]
 }
 
-func (c *crateStack) size() int {
-	return len(c.crates)
+func (s *crateStack) size() int {
+	return len(s.crates)
 }
 
 func parseCrates(lines []string) ([]crateStack, int) {
@@ -104,9 +106,9 @@ func parseCrates(lines []string) ([]crateStack, int) {
 	// read from bottom and push crates on crates
 	for i := linesRead - 1; i >= 0; i-- {
 		for j := 0; j*4 < len(lines[i]); j++ {
-			crate := lines[i][j*4 : j*4+3]
-			if strings.ContainsRune(crate, '[') {
-				crates[j].pushCrate(string(crate[1]))
+			entry := lines[i][j*4 : j*4+3]
+			if strings.ContainsRune(entry, '[') {
+				crates[j].pushCrate(crate(entry[1]))
 			}
 		}
 	}
@@ -136,7 +138,7 @@ func getTopCrates(crates []crateStack) string {
 	topCrates := ""
 
 	for i := 0; i < len(crates); i++ {
-		topCrates = topCrates + crates[i].topCrate()
+		topCrates = topCrates + string(crates[i].topCrate())
 	}
 
 	return topCrates

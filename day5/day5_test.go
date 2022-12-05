@@ -33,57 +33,57 @@ func TestNewCrateStack(t *testing.T) {
 
 func TestStackPushCrate(t *testing.T) {
 	stack := newCrateStack()
-	stack.pushCrate("A")
+	stack.pushCrate('A')
 
 	assert.Equal(t, 1, len(stack.crates))
-	assert.Equal(t, "A", stack.crates[0])
+	assert.Equal(t, crate('A'), stack.crates[0])
 }
 
 func TestStackPushCrates(t *testing.T) {
 	stack := newCrateStack()
-	stack.pushCrates([]string{"A", "B"})
+	stack.pushCrates([]crate{'A', 'B'})
 
 	assert.Equal(t, 2, len(stack.crates))
-	assert.Equal(t, "A", stack.crates[0])
-	assert.Equal(t, "B", stack.crates[1])
+	assert.Equal(t, crate('A'), stack.crates[0])
+	assert.Equal(t, crate('B'), stack.crates[1])
 }
 
 func TestStackPopCratesInOrder(t *testing.T) {
 	stack := newCrateStack()
-	stack.pushCrates([]string{"A", "B", "C", "D"})
+	stack.pushCrates([]crate{'A', 'B', 'C', 'D'})
 	top := stack.popCratesInOrder(2)
 
 	assert.Equal(t, 2, len(stack.crates))
-	assert.Equal(t, "C", stack.crates[0])
-	assert.Equal(t, "D", stack.crates[1])
+	assert.Equal(t, crate('C'), stack.crates[0])
+	assert.Equal(t, crate('D'), stack.crates[1])
 	assert.Equal(t, 2, len(top))
-	assert.Equal(t, "A", top[0])
-	assert.Equal(t, "B", top[1])
+	assert.Equal(t, crate('A'), top[0])
+	assert.Equal(t, crate('B'), top[1])
 }
 
 func TestStackPopCratesReversed(t *testing.T) {
 	stack := newCrateStack()
-	stack.pushCrates([]string{"A", "B", "C", "D"})
+	stack.pushCrates([]crate{'A', 'B', 'C', 'D'})
 	top := stack.popCratesReversed(2)
 
 	assert.Equal(t, 2, len(stack.crates))
-	assert.Equal(t, "C", stack.crates[0])
-	assert.Equal(t, "D", stack.crates[1])
+	assert.Equal(t, crate('C'), stack.crates[0])
+	assert.Equal(t, crate('D'), stack.crates[1])
 	assert.Equal(t, 2, len(top))
-	assert.Equal(t, "B", top[0])
-	assert.Equal(t, "A", top[1])
+	assert.Equal(t, crate('B'), top[0])
+	assert.Equal(t, crate('A'), top[1])
 }
 
 func TestStackTopCrate(t *testing.T) {
 	stack := newCrateStack()
-	stack.pushCrate("A")
+	stack.pushCrates([]crate{'A', 'B', 'C', 'D'})
 
-	assert.Equal(t, "A", stack.topCrate())
+	assert.Equal(t, crate('A'), stack.topCrate())
 }
 
 func TestStackSize(t *testing.T) {
 	stack := newCrateStack()
-	stack.pushCrates([]string{"A", "B", "C", "D"})
+	stack.pushCrates([]crate{'A', 'B', 'C', 'D'})
 
 	assert.Equal(t, 4, stack.size())
 }
