@@ -25,14 +25,77 @@ func TestPart2(t *testing.T) {
 	assert.Equal(t, "MCD", solvePart2(lines))
 }
 
+func TestNewCrateStack(t *testing.T) {
+	stack := newCrateStack()
+
+	assert.Equal(t, 0, len(stack.crates))
+}
+
+func TestStackPushCrate(t *testing.T) {
+	stack := newCrateStack()
+	stack.pushCrate("A")
+
+	assert.Equal(t, 1, len(stack.crates))
+	assert.Equal(t, "A", stack.crates[0])
+}
+
+func TestStackPushCrates(t *testing.T) {
+	stack := newCrateStack()
+	stack.pushCrates([]string{"A", "B"})
+
+	assert.Equal(t, 2, len(stack.crates))
+	assert.Equal(t, "A", stack.crates[0])
+	assert.Equal(t, "B", stack.crates[1])
+}
+
+func TestStackPopCratesInOrder(t *testing.T) {
+	stack := newCrateStack()
+	stack.pushCrates([]string{"A", "B", "C", "D"})
+	top := stack.popCratesInOrder(2)
+
+	assert.Equal(t, 2, len(stack.crates))
+	assert.Equal(t, "C", stack.crates[0])
+	assert.Equal(t, "D", stack.crates[1])
+	assert.Equal(t, 2, len(top))
+	assert.Equal(t, "A", top[0])
+	assert.Equal(t, "B", top[1])
+}
+
+func TestStackPopCratesReversed(t *testing.T) {
+	stack := newCrateStack()
+	stack.pushCrates([]string{"A", "B", "C", "D"})
+	top := stack.popCratesReversed(2)
+
+	assert.Equal(t, 2, len(stack.crates))
+	assert.Equal(t, "C", stack.crates[0])
+	assert.Equal(t, "D", stack.crates[1])
+	assert.Equal(t, 2, len(top))
+	assert.Equal(t, "B", top[0])
+	assert.Equal(t, "A", top[1])
+}
+
+func TestStackTopCrate(t *testing.T) {
+	stack := newCrateStack()
+	stack.pushCrate("A")
+
+	assert.Equal(t, "A", stack.topCrate())
+}
+
+func TestStackSize(t *testing.T) {
+	stack := newCrateStack()
+	stack.pushCrates([]string{"A", "B", "C", "D"})
+
+	assert.Equal(t, 4, stack.size())
+}
+
 func TestParseCrates(t *testing.T) {
 	crates, linesRead := parseCrates(lines)
 
 	assert.Equal(t, 5, linesRead)
 	assert.Equal(t, 3, len(crates))
-	assert.Equal(t, 2, len(crates[0]))
-	assert.Equal(t, 3, len(crates[1]))
-	assert.Equal(t, 1, len(crates[2]))
+	assert.Equal(t, 2, crates[0].size())
+	assert.Equal(t, 3, crates[1].size())
+	assert.Equal(t, 1, crates[2].size())
 }
 
 func TestParseAction(t *testing.T) {
