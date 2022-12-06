@@ -30,6 +30,14 @@ func HasDuplicates(s string) bool {
 	return false
 }
 
+// Min returns the minimum of the two given numbers
+func Min(a int, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 // Max returns the maximum of the two given numbers
 func Max(a int, b int) int {
 	if a > b {

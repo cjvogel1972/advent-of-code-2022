@@ -46,18 +46,17 @@ func solvePart2(lines []string) int {
 
 func newAssignment(sectionRange string) assignment {
 	sections := strings.Split(sectionRange, "-")
-	return assignment{utils.ToInt(sections[0]), utils.ToInt(sections[1])}
+	return assignment{utils.NewRange(utils.ToInt(sections[0]), utils.ToInt(sections[1]))}
 }
 
 type assignment struct {
-	start int
-	end   int
+	utils.Range
 }
 
 func (a assignment) completeOverlap(other assignment) bool {
-	return utils.Within(other.start, a.start, a.end) && utils.Within(other.end, a.start, a.end)
+	return a.Within(other.Range)
 }
 
 func (a assignment) overlap(other assignment) bool {
-	return utils.Within(other.start, a.start, a.end) || utils.Within(other.end, a.start, a.end)
+	return a.Overlap(other.Range)
 }
