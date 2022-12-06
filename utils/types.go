@@ -15,8 +15,8 @@ func ToInt(s string) int {
 	return i
 }
 
-// InBetween checks to see if a number is between two given numbers
-func InBetween(i int, min int, max int) bool {
+// Within checks to see if a number is within the range of two given numbers
+func Within(i int, min int, max int) bool {
 	return min <= i && i <= max
 }
 

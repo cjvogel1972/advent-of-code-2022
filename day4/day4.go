@@ -55,9 +55,9 @@ type assignment struct {
 }
 
 func (a assignment) completeOverlap(other assignment) bool {
-	return utils.InBetween(other.start, a.start, a.end) && utils.InBetween(other.end, a.start, a.end)
+	return utils.Within(other.start, a.start, a.end) && utils.Within(other.end, a.start, a.end)
 }
 
 func (a assignment) overlap(other assignment) bool {
-	return utils.InBetween(other.start, a.start, a.end) || utils.InBetween(other.end, a.start, a.end)
+	return utils.Within(other.start, a.start, a.end) || utils.Within(other.end, a.start, a.end)
 }
