@@ -44,3 +44,23 @@ func TestHasDuplicates(t *testing.T) {
 		})
 	}
 }
+
+func TestMax(t *testing.T) {
+	tests := []struct {
+		name   string
+		a      int
+		b      int
+		output int
+	}{
+		{"b bigger", 10, 20, 20},
+		{"a bigger", 30, 20, 30},
+		{"equal", 5, 5, 5},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.output, Max(tt.a, tt.b))
+		})
+	}
+}

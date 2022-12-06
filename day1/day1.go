@@ -20,9 +20,7 @@ func solvePart1(lines []string) int {
 	totalCalories := 0
 	for _, line := range lines {
 		if len(line) == 0 {
-			if totalCalories > maxCalories {
-				maxCalories = totalCalories
-			}
+			maxCalories = utils.Max(totalCalories, maxCalories)
 			totalCalories = 0
 		} else {
 			totalCalories += utils.ToInt(line)
