@@ -1,11 +1,33 @@
-package utils
+package _range
 
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestRange_Contains(t *testing.T) {
+func TestNew(t *testing.T) {
+	tests := []struct {
+		name  string
+		a     int
+		b     int
+		start int
+		end   int
+	}{
+		{"in order", 10, 20, 10, 20},
+		{"backwards", 20, 10, 10, 20},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			r := New(tt.a, tt.b)
+			assert.Equal(t, tt.start, r.start)
+			assert.Equal(t, tt.end, r.end)
+		})
+	}
+}
+
+func TestContains(t *testing.T) {
 	tests := []struct {
 		name   string
 		i      int
@@ -30,7 +52,7 @@ func TestRange_Contains(t *testing.T) {
 
 }
 
-func TestRange_Within(t *testing.T) {
+func TestWithin(t *testing.T) {
 	tests := []struct {
 		name    string
 		r1Start int
@@ -57,7 +79,7 @@ func TestRange_Within(t *testing.T) {
 
 }
 
-func TestRange_Overlap(t *testing.T) {
+func TestOverlap(t *testing.T) {
 	tests := []struct {
 		name    string
 		r1Start int

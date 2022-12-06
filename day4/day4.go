@@ -2,6 +2,7 @@ package day4
 
 import (
 	"advent-of-code-2022/utils"
+	"advent-of-code-2022/utils/range"
 	"fmt"
 	"strings"
 )
@@ -44,7 +45,7 @@ func solvePart2(lines []string) int {
 	return someOverlaps
 }
 
-func newAssignment(sectionRange string) utils.Range {
+func newAssignment(sectionRange string) _range.Range {
 	sections := strings.Split(sectionRange, "-")
-	return utils.NewRange(utils.ToInt(sections[0]), utils.ToInt(sections[1]))
+	return _range.New(utils.ToInt(sections[0]), utils.ToInt(sections[1]))
 }
