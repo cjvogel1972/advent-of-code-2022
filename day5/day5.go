@@ -2,6 +2,7 @@ package day5
 
 import (
 	"advent-of-code-2022/utils"
+	"advent-of-code-2022/utils/stack"
 	"fmt"
 	"strings"
 )
@@ -36,7 +37,7 @@ func solvePart2(lines []string) string {
 
 	for i := 0; i < len(actions); i++ {
 		numCratesToMove, fromStack, toStack := parseAction(actions[i])
-		tempStack := utils.Stack{}
+		tempStack := stack.New()
 		for j := 0; j < numCratesToMove; j++ {
 			tempStack.Push(stacks[fromStack].Pop())
 		}
@@ -48,12 +49,12 @@ func solvePart2(lines []string) string {
 	return getTopCrates(stacks)
 }
 
-func parseCrates(lines []string) []utils.Stack {
+func parseCrates(lines []string) []stack.Stack {
 	numColumns := parseNumColumns(lines[len(lines)-1])
 
-	stacks := make([]utils.Stack, numColumns)
+	stacks := make([]stack.Stack, numColumns)
 	for i := 0; i < numColumns; i++ {
-		stacks[i] = utils.Stack{}
+		stacks[i] = stack.New()
 	}
 
 	// read from bottom, above footer, and push crates on stack
@@ -87,7 +88,7 @@ func parseAction(line string) (int, int, int) {
 	return numCratesToMove, fromStack, toStack
 }
 
-func getTopCrates(crates []utils.Stack) string {
+func getTopCrates(crates []stack.Stack) string {
 	topCrates := ""
 
 	for i := 0; i < len(crates); i++ {
