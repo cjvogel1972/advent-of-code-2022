@@ -1,11 +1,11 @@
-package utils
+package stack
 
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestNewStack(t *testing.T) {
+func TestNew(t *testing.T) {
 	stack := Stack{}
 
 	assert.NotNil(t, stack)

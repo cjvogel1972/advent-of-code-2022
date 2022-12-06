@@ -1,7 +1,11 @@
-package utils
+package stack
 
 type Stack struct {
 	items []interface{}
+}
+
+func New() Stack {
+	return Stack{}
 }
 
 func (s *Stack) Push(i interface{}) {
