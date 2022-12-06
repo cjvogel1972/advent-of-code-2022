@@ -3,6 +3,7 @@ package day6
 import (
 	"advent-of-code-2022/utils"
 	"fmt"
+	"strings"
 )
 
 type Puzzle struct{}
@@ -16,29 +17,26 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(line string) int {
-	for i := 0; i < len(line); i++ {
-		if line[i] != line[i+1] && line[i] != line[i+2] && line[i] != line[i+3] && line[i+1] != line[i+2] && line[i+1] != line[i+3] && line[i+2] != line[i+3] {
-			return i + 4
-		}
-	}
-	return 0
+	return computeMarkerLocation(line, 4)
 }
 
 func solvePart2(line string) int {
-next:
-	for i := 0; i < len(line); i++ {
+	return computeMarkerLocation(line, 14)
+}
+
+func computeMarkerLocation(line string, markerSize int) int {
+	for i := 0; i < len(line)-markerSize; i++ {
+		startMarker := line[i : i+markerSize]
 		unique := true
-		for j := 0; j < 14; j++ {
-			for k := j + 1; k < 14; k++ {
-				if line[i+j] == line[i+k] {
-					unique = false
-					continue next
-				}
+		for j := 0; j < markerSize; j++ {
+			if strings.Count(startMarker, string(startMarker[j])) != 1 {
+				unique = false
+				break
 			}
 		}
 		if unique {
-			return i + 14
+			return i + markerSize
 		}
 	}
-	return 0
+	panic(-1)
 }
