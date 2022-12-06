@@ -17,86 +17,43 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(lines []string) string {
-	stacks, actions := utils.SplitFile(lines)
-	crates := parseCrates(stacks)
+	crateConfig, actions := utils.SplitFile(lines)
+	stacks := parseCrates(crateConfig)
 
 	for i := 0; i < len(actions); i++ {
-		numCratesToMove, fromColumn, toColumn := parseAction(actions[i])
-		movingCrates := crates[fromColumn].popCratesReversed(numCratesToMove)
-		crates[toColumn].pushCrates(movingCrates)
+		numCratesToMove, fromStack, toStack := parseAction(actions[i])
+		for j := 0; j < numCratesToMove; j++ {
+			stacks[toStack].Push(stacks[fromStack].Pop())
+		}
 	}
 
-	return getTopCrates(crates)
+	return getTopCrates(stacks)
 }
 
 func solvePart2(lines []string) string {
-	stacks, actions := utils.SplitFile(lines)
-	crates := parseCrates(stacks)
+	crateConfig, actions := utils.SplitFile(lines)
+	stacks := parseCrates(crateConfig)
 
 	for i := 0; i < len(actions); i++ {
-		numCratesToMove, fromColumn, toColumn := parseAction(actions[i])
-		movingCrates := crates[fromColumn].popCratesInOrder(numCratesToMove)
-		crates[toColumn].pushCrates(movingCrates)
+		numCratesToMove, fromStack, toStack := parseAction(actions[i])
+		tempStack := utils.Stack{}
+		for j := 0; j < numCratesToMove; j++ {
+			tempStack.Push(stacks[fromStack].Pop())
+		}
+		for j := 0; j < numCratesToMove; j++ {
+			stacks[toStack].Push(tempStack.Pop())
+		}
 	}
 
-	return getTopCrates(crates)
+	return getTopCrates(stacks)
 }
 
-type crate rune
-
-func newCrateStack() crateStack {
-	crates := make([]crate, 0)
-	return crateStack{crates}
-}
-
-type crateStack struct {
-	crates []crate
-}
-
-func (s *crateStack) pushCrate(c crate) {
-	s.crates = append([]crate{c}, s.crates...)
-}
-
-func (s *crateStack) pushCrates(crates []crate) {
-	s.crates = append(crates, s.crates...)
-}
-
-func (s *crateStack) popCratesInOrder(numCratesToMove int) []crate {
-	top := make([]crate, numCratesToMove)
-	for j := 0; j < numCratesToMove; j++ {
-		top[j] = s.crates[j]
-	}
-
-	s.crates = s.crates[numCratesToMove:]
-
-	return top
-}
-
-func (s *crateStack) popCratesReversed(numCratesToMove int) []crate {
-	top := make([]crate, numCratesToMove)
-	for j := 0; j < numCratesToMove; j++ {
-		top[j] = s.crates[numCratesToMove-1-j]
-	}
-
-	s.crates = s.crates[numCratesToMove:]
-
-	return top
-}
-
-func (s *crateStack) topCrate() crate {
-	return s.crates[0]
-}
-
-func (s *crateStack) size() int {
-	return len(s.crates)
-}
-
-func parseCrates(lines []string) []crateStack {
+func parseCrates(lines []string) []utils.Stack {
 	numColumns := parseNumColumns(lines[len(lines)-1])
 
-	crates := make([]crateStack, numColumns)
+	stacks := make([]utils.Stack, numColumns)
 	for i := 0; i < numColumns; i++ {
-		crates[i] = newCrateStack()
+		stacks[i] = utils.Stack{}
 	}
 
 	// read from bottom, above footer, and push crates on stack
@@ -104,12 +61,12 @@ func parseCrates(lines []string) []crateStack {
 		for j := 0; j*4 < len(lines[i]); j++ {
 			entry := lines[i][j*4 : j*4+3]
 			if strings.ContainsRune(entry, '[') {
-				crates[j].pushCrate(crate(entry[1]))
+				stacks[j].Push(rune(entry[1]))
 			}
 		}
 	}
 
-	return crates
+	return stacks
 }
 
 func parseNumColumns(line string) int {
@@ -117,24 +74,24 @@ func parseNumColumns(line string) int {
 }
 
 func parseAction(line string) (int, int, int) {
-	var numCratesToMove, fromColumn, toColumn int
-	_, err := fmt.Sscanf(line, "move %d from %d to %d", &numCratesToMove, &fromColumn, &toColumn)
+	var numCratesToMove, fromStack, toStack int
+	_, err := fmt.Sscanf(line, "move %d from %d to %d", &numCratesToMove, &fromStack, &toStack)
 	if err != nil {
 		panic(err)
 	}
 
 	// adjust for slices starting at 0
-	fromColumn--
-	toColumn--
+	fromStack--
+	toStack--
 
-	return numCratesToMove, fromColumn, toColumn
+	return numCratesToMove, fromStack, toStack
 }
 
-func getTopCrates(crates []crateStack) string {
+func getTopCrates(crates []utils.Stack) string {
 	topCrates := ""
 
 	for i := 0; i < len(crates); i++ {
-		topCrates = topCrates + string(crates[i].topCrate())
+		topCrates = topCrates + string(crates[i].Peek().(rune))
 	}
 
 	return topCrates
