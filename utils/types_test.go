@@ -64,3 +64,23 @@ func TestMax(t *testing.T) {
 		})
 	}
 }
+
+func TestMin(t *testing.T) {
+	tests := []struct {
+		name   string
+		a      int
+		b      int
+		output int
+	}{
+		{"a smaller", 10, 20, 10},
+		{"b smaller", 30, 20, 20},
+		{"equal", 5, 5, 5},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.output, Min(tt.a, tt.b))
+		})
+	}
+}
