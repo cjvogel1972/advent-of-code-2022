@@ -22,7 +22,7 @@ func solvePart1(lines []string) int {
 		assignments := strings.Split(pair, ",")
 		elf1 := newAssignment(assignments[0])
 		elf2 := newAssignment(assignments[1])
-		if elf1.completeOverlap(elf2) || elf2.completeOverlap(elf1) {
+		if elf1.Within(elf2) || elf2.Within(elf1) {
 			totalOverlaps++
 		}
 	}
@@ -36,7 +36,7 @@ func solvePart2(lines []string) int {
 		assignments := strings.Split(pair, ",")
 		elf1 := newAssignment(assignments[0])
 		elf2 := newAssignment(assignments[1])
-		if elf1.overlap(elf2) || elf2.overlap(elf1) {
+		if elf1.Overlap(elf2) || elf2.Overlap(elf1) {
 			someOverlaps++
 		}
 	}
@@ -44,19 +44,7 @@ func solvePart2(lines []string) int {
 	return someOverlaps
 }
 
-func newAssignment(sectionRange string) assignment {
+func newAssignment(sectionRange string) utils.Range {
 	sections := strings.Split(sectionRange, "-")
-	return assignment{utils.NewRange(utils.ToInt(sections[0]), utils.ToInt(sections[1]))}
-}
-
-type assignment struct {
-	utils.Range
-}
-
-func (a assignment) completeOverlap(other assignment) bool {
-	return a.Within(other.Range)
-}
-
-func (a assignment) overlap(other assignment) bool {
-	return a.Overlap(other.Range)
+	return utils.NewRange(utils.ToInt(sections[0]), utils.ToInt(sections[1]))
 }
