@@ -49,12 +49,8 @@ func createDirectoryStructure(lines []string) directory {
 			dirName := strings.Split(lines[i], " ")[2]
 			if dirName == "/" {
 				curDir = &rootDir
-			} else if dirName == ".." {
-				if curDir.parent != nil {
-					curDir = curDir.parent
-				}
 			} else {
-				curDir = curDir.directories[dirName]
+				curDir = curDir.changeDirectory(dirName)
 			}
 			i++
 		}
@@ -125,6 +121,23 @@ func (d *directory) addFile(name string, size int) {
 func (d *directory) makeDirectory(name string) {
 	dir := newDirectory(name, d)
 	d.directories[name] = &dir
+}
+
+func (d *directory) changeDirectory(name string) *directory {
+	if name == ".." {
+		if d.parent == nil {
+			return d
+		} else {
+			return d.parent
+		}
+	} else {
+		cd, found := d.directories[name]
+		if found {
+			return cd
+		} else {
+			return d
+		}
+	}
 }
 
 func (d *directory) size() int {
