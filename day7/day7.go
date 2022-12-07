@@ -3,10 +3,15 @@ package day7
 import (
 	"advent-of-code-2022/utils"
 	"fmt"
+	"math"
 	"strings"
 )
 
 type Puzzle struct{}
+
+const deviceTotalDiskSpace = 70000000
+const spaceNeededForUpdate = 30000000
+const maxDirectorySize = 100000
 
 // Solve solves day 7's puzzles
 func (Puzzle) Solve() {
@@ -17,69 +22,44 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(lines []string) int {
-	rootDir := createRootDir(lines)
+	rootDir := createDirectoryStructure(lines)
 
-	return computeDirSize(rootDir)
+	return sumDirectorySizesLessThan(rootDir, maxDirectorySize)
 }
 
 func solvePart2(lines []string) int {
-	rootDir := createRootDir(lines)
-	totalDiskSpace := 70000000
-	unusedDiskSpace := totalDiskSpace - rootDir.size()
-	neededDiskSpace := 30000000
-	spaceToClear := neededDiskSpace - unusedDiskSpace
+	rootDir := createDirectoryStructure(lines)
 
-	curDir := &rootDir
-	smallestDir := findDirectoryToDelete(curDir, spaceToClear)
+	unusedDiskSpace := deviceTotalDiskSpace - rootDir.size()
+	spaceToClear := spaceNeededForUpdate - unusedDiskSpace
 
-	return smallestDir.size()
+	toDelete := findDirectoryToDelete(rootDir, spaceToClear)
+
+	return toDelete.size()
 }
 
-func findDirectoryToDelete(dir *directory, spaceToClear int) *directory {
-	var dirSizes = make(map[string]*directory)
-	for _, d := range dir.directories {
-		size := d.size()
-		if size >= spaceToClear {
-			result := findDirectoryToDelete(d, spaceToClear)
-			dirSizes[result.name] = result
-		}
-	}
-
-	if len(dirSizes) == 0 {
-		return dir
-	}
-
-	var smallestName string
-	smallestSize := 0
-	for n, d := range dirSizes {
-		if d.size() < smallestSize || smallestSize == 0 {
-			smallestName = n
-			smallestSize = d.size()
-		}
-	}
-
-	return dirSizes[smallestName]
-}
-
-func createRootDir(lines []string) directory {
+func createDirectoryStructure(lines []string) directory {
 	rootDir := newDirectory("/", nil)
 	curDir := &rootDir
-	for i := 1; i < len(lines); {
+
+	for i := 0; i < len(lines); {
 		if lines[i] == "$ ls" {
-			i++
-			i = parseListing(curDir, lines, i)
+			i = parseListing(curDir, lines, i+1)
 		} else if strings.HasPrefix(lines[i], "$ cd") {
-			entry := strings.Split(lines[i], " ")
-			if entry[2] == ".." {
+			dirName := strings.Split(lines[i], " ")[2]
+			if dirName == "/" {
+				curDir = &rootDir
+			} else if dirName == ".." {
 				if curDir.parent != nil {
 					curDir = curDir.parent
 				}
 			} else {
-				curDir = curDir.directories[entry[2]]
+				curDir = curDir.directories[dirName]
 			}
 			i++
 		}
 	}
+
 	return rootDir
 }
 
@@ -87,28 +67,44 @@ func parseListing(dir *directory, lines []string, i int) int {
 	for i < len(lines) && !strings.HasPrefix(lines[i], "$") {
 		entry := strings.Split(lines[i], " ")
 		if entry[0] == "dir" {
-			newDir := newDirectory(entry[1], dir)
-			dir.directories[entry[1]] = &newDir
+			dir.makeDirectory(entry[1])
 		} else {
-			dir.files[entry[1]] = utils.ToInt(entry[0])
+			dir.addFile(entry[1], utils.ToInt(entry[0]))
 		}
 		i++
 	}
+
 	return i
 }
 
-func computeDirSize(dir directory) int {
+func sumDirectorySizesLessThan(dir directory, max int) int {
 	size := 0
-	dirSize := dir.size()
-	if dirSize <= 100000 {
-		size += dirSize
-	}
 
-	for _, d := range dir.directories {
-		size += computeDirSize(*d)
+	subDirs := dir.allSubDirectories()
+	for _, d := range subDirs {
+		dirSize := d.size()
+		if dirSize <= max {
+			size += dirSize
+		}
 	}
 
 	return size
+}
+
+func findDirectoryToDelete(dir directory, spaceToClear int) directory {
+	var toDelete directory
+	smallestSize := math.MaxInt
+
+	subDirs := dir.allSubDirectories()
+	for _, s := range subDirs {
+		size := s.size()
+		if size > spaceToClear && size < smallestSize {
+			toDelete = s
+			smallestSize = size
+		}
+	}
+
+	return toDelete
 }
 
 func newDirectory(name string, parent *directory) directory {
@@ -122,7 +118,16 @@ type directory struct {
 	parent      *directory
 }
 
-func (d directory) size() int {
+func (d *directory) addFile(name string, size int) {
+	d.files[name] = size
+}
+
+func (d *directory) makeDirectory(name string) {
+	dir := newDirectory(name, d)
+	d.directories[name] = &dir
+}
+
+func (d *directory) size() int {
 	size := 0
 	for _, f := range d.files {
 		size += f
@@ -132,4 +137,15 @@ func (d directory) size() int {
 	}
 
 	return size
+}
+
+func (d *directory) allSubDirectories() []directory {
+	result := make([]directory, 0)
+
+	for _, s := range d.directories {
+		result = append(result, *s)
+		result = append(result, s.allSubDirectories()...)
+	}
+
+	return result
 }
