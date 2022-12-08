@@ -20,26 +20,27 @@ func solvePart1(lines []string) int {
 	g := grid.NewIntGridFromLines(lines)
 
 	visible := grid.NewEmptyBoolGrid(g.Width, g.Height)
-	for i := 0; i < g.Height; i++ {
-		for j := 0; j < g.Width; j++ {
-			row, err := g.Row(i)
-			if err != nil {
-				panic(err)
-			}
-			visRow := treeVisible(row, j)
-
-			col, err := g.Column(j)
-			if err != nil {
-				panic(err)
-			}
-			visColumn := treeVisible(col, i)
-
-			err = visible.Set(j, i, visRow || visColumn)
-			if err != nil {
-				panic(err)
-			}
+	g.Iterate(func(x int, y int) {
+		row, err := g.Row(x)
+		if err != nil {
+			panic(err)
 		}
-	}
+		v := treeVisible(row, y)
+
+		if !v {
+			col, err := g.Column(y)
+			if err != nil {
+				panic(err)
+			}
+			v = treeVisible(col, x)
+		}
+
+		err = visible.Set(x, y, v)
+		if err != nil {
+			panic(err)
+		}
+
+	})
 
 	return visible.CountTrue()
 }
@@ -48,26 +49,26 @@ func solvePart2(lines []string) int {
 	g := grid.NewIntGridFromLines(lines)
 
 	score := grid.NewEmptyIntGrid(g.Width, g.Height)
-	for i := 0; i < g.Height; i++ {
-		for j := 0; j < g.Width; j++ {
-			row, err := g.Row(i)
-			if err != nil {
-				panic(err)
-			}
-			scoreRow := treeScore(row, j)
-
-			col, err := g.Column(j)
-			if err != nil {
-				panic(err)
-			}
-			scoreColumn := treeScore(col, i)
-
-			err = score.Set(j, i, scoreRow*scoreColumn)
-			if err != nil {
-				panic(err)
-			}
+	g.Iterate(func(x int, y int) {
+		row, err := g.Row(x)
+		if err != nil {
+			panic(err)
 		}
-	}
+		s := treeScore(row, y)
+
+		if s != 0 {
+			col, err := g.Column(y)
+			if err != nil {
+				panic(err)
+			}
+			s *= treeScore(col, x)
+		}
+
+		err = score.Set(x, y, s)
+		if err != nil {
+			panic(err)
+		}
+	})
 
 	return score.Max()
 }
@@ -80,6 +81,9 @@ func treeVisible(trees []int, treeIndex int) bool {
 			break
 		}
 	}
+	if visBefore {
+		return true
+	}
 
 	visAfter := true
 	for i := treeIndex + 1; i < len(trees); i++ {
@@ -89,7 +93,7 @@ func treeVisible(trees []int, treeIndex int) bool {
 		}
 	}
 
-	return visBefore || visAfter
+	return visAfter
 }
 
 func treeScore(trees []int, treeIndex int) int {
@@ -99,6 +103,9 @@ func treeScore(trees []int, treeIndex int) int {
 		if trees[treeIndex] <= trees[i] {
 			break
 		}
+	}
+	if scoreBefore == 0 {
+		return 0
 	}
 
 	scoreAfter := 0
