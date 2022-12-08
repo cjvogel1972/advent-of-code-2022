@@ -63,3 +63,11 @@ func (g *Grid[T]) Set(x int, y int, value T) error {
 	g.grid[y][x] = value
 	return nil
 }
+
+func (g *Grid[T]) Iterate(f func(x int, y int)) {
+	for y := 0; y < g.Height; y++ {
+		for x := 0; x < g.Width; x++ {
+			f(x, y)
+		}
+	}
+}
