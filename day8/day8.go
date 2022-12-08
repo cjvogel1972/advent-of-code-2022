@@ -2,6 +2,7 @@ package day8
 
 import (
 	"advent-of-code-2022/utils"
+	"advent-of-code-2022/utils/grid"
 	"fmt"
 )
 
@@ -16,76 +17,59 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(lines []string) int {
-	trees, width, height := parseTrees(lines)
+	g := grid.NewIntGridFromLines(lines)
 
-	visible := make([][]bool, height)
-	for i := 0; i < height; i++ {
-		visible[i] = make([]bool, width)
-		for j := 0; j < width; j++ {
-			visRow := treeVisible(trees[i], j)
-			visColumn := treeVisible(getColumn(trees, j), i)
-			visible[i][j] = visRow || visColumn
-		}
-	}
+	visible := grid.NewEmptyBoolGrid(g.Width, g.Height)
+	for i := 0; i < g.Height; i++ {
+		for j := 0; j < g.Width; j++ {
+			row, err := g.Row(i)
+			if err != nil {
+				panic(err)
+			}
+			visRow := treeVisible(row, j)
 
-	visibleCount := 0
-	for i := 0; i < height; i++ {
-		for j := 0; j < width; j++ {
-			if visible[i][j] {
-				visibleCount++
+			col, err := g.Column(j)
+			if err != nil {
+				panic(err)
+			}
+			visColumn := treeVisible(col, i)
+
+			err = visible.Set(j, i, visRow || visColumn)
+			if err != nil {
+				panic(err)
 			}
 		}
 	}
 
-	return visibleCount
+	return visible.CountTrue()
 }
 
 func solvePart2(lines []string) int {
-	trees, width, height := parseTrees(lines)
+	g := grid.NewIntGridFromLines(lines)
 
-	score := make([][]int, height)
-	for i := 0; i < height; i++ {
-		score[i] = make([]int, width)
-		for j := 0; j < width; j++ {
-			scoreRow := treeScore(trees[i], j)
-			scoreColumn := treeScore(getColumn(trees, j), i)
-			score[i][j] = scoreRow * scoreColumn
+	score := grid.NewEmptyIntGrid(g.Width, g.Height)
+	for i := 0; i < g.Height; i++ {
+		for j := 0; j < g.Width; j++ {
+			row, err := g.Row(i)
+			if err != nil {
+				panic(err)
+			}
+			scoreRow := treeScore(row, j)
+
+			col, err := g.Column(j)
+			if err != nil {
+				panic(err)
+			}
+			scoreColumn := treeScore(col, i)
+
+			err = score.Set(j, i, scoreRow*scoreColumn)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
-	maxScore := 0
-	for i := 0; i < height; i++ {
-		for j := 0; j < width; j++ {
-			maxScore = utils.Max(maxScore, score[i][j])
-		}
-	}
-
-	return maxScore
-}
-
-func parseTrees(lines []string) ([][]int, int, int) {
-	width := len(lines[0])
-	height := len(lines)
-
-	trees := make([][]int, height)
-	for i := 0; i < height; i++ {
-		row := make([]int, width)
-		for j := 0; j < width; j++ {
-			row[j] = utils.ToInt(string(lines[i][j]))
-		}
-		trees[i] = row
-	}
-
-	return trees, width, height
-}
-
-func getColumn(trees [][]int, columnNo int) []int {
-	column := make([]int, len(trees))
-	for i := 0; i < len(trees); i++ {
-		column[i] = trees[i][columnNo]
-	}
-
-	return column
+	return score.Max()
 }
 
 func treeVisible(trees []int, treeIndex int) bool {

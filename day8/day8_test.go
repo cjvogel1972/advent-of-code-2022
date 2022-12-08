@@ -21,12 +21,6 @@ func TestPart2(t *testing.T) {
 	assert.Equal(t, 8, solvePart2(lines))
 }
 
-func TestGetColumn(t *testing.T) {
-	trees, _, _ := parseTrees(lines)
-	column := getColumn(trees, 2)
-	assert.Equal(t, []int{3, 5, 3, 5, 3}, column)
-}
-
 func TestTreeVisible(t *testing.T) {
 	tests := []struct {
 		name   string
