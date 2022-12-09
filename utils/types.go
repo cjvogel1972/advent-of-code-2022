@@ -2,9 +2,23 @@ package utils
 
 import (
 	"log"
+	"math"
 	"strconv"
 	"strings"
 )
+
+type Point struct {
+	X int
+	Y int
+}
+
+func (p Point) Distance(o Point) int {
+	return int(math.Sqrt(float64(((p.X - o.X) ^ 2) + ((p.Y - o.Y) * 2))))
+}
+
+func (p Point) Copy() Point {
+	return Point{p.X, p.Y}
+}
 
 // ToInt converts a string to an integer, exiting the app if there is an error
 func ToInt(s string) int {
