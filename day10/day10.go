@@ -22,74 +22,77 @@ func (Puzzle) Solve() {
 func solvePart1(lines []string) int {
 	x := 1
 	cycleNo := 0
-	sumSignalStrength := 0
+	totalSignalStrength := 0
 
 	for _, instruction := range lines {
 		if instruction == "noop" {
-			cycleNo++
-			if cycleNo == 20 || (cycleNo-20)%40 == 0 {
-				sumSignalStrength += x * cycleNo
-			}
+			cycleNo, totalSignalStrength = part1Cycle(cycleNo, x, totalSignalStrength)
 		} else {
 			val := utils.ToInt(strings.Split(instruction, " ")[1])
-			cycleNo++
-			if cycleNo == 20 || (cycleNo-20)%40 == 0 {
-				sumSignalStrength += x * cycleNo
-			}
-			cycleNo++
-			if cycleNo == 20 || (cycleNo-20)%40 == 0 {
-				sumSignalStrength += x * cycleNo
-			}
+			cycleNo, totalSignalStrength = part1Cycle(cycleNo, x, totalSignalStrength)
+			cycleNo, totalSignalStrength = part1Cycle(cycleNo, x, totalSignalStrength)
 			x += val
 		}
 	}
 
-	return sumSignalStrength
+	return totalSignalStrength
+}
+
+func part1Cycle(cycleNo int, x int, totalSignalStrength int) (int, int) {
+	cycleNo++
+	if cycleNo == 20 || (cycleNo-20)%40 == 0 {
+		totalSignalStrength += x * cycleNo
+	}
+
+	return cycleNo, totalSignalStrength
 }
 
 func solvePart2(lines []string) []string {
 	x := 1
 	cycleNo := 0
-	result := make([]string, 0)
+	crtScreen := make([]string, 0)
 	crtLine := make([]rune, 40)
+	initCrtLine(crtLine)
 
 	for _, instruction := range lines {
 		if instruction == "noop" {
-			if x-1 <= cycleNo%40 && cycleNo%40 <= x+1 {
-				crtLine[cycleNo%40] = '#'
-			} else {
-				crtLine[cycleNo%40] = '.'
-			}
-			cycleNo++
-			if cycleNo%40 == 0 {
-				result = append(result, string(crtLine))
-				crtLine = make([]rune, 40)
-			}
+			cycleNo, crtScreen = part2Cycle(x, cycleNo, crtLine, crtScreen)
 		} else {
 			val := utils.ToInt(strings.Split(instruction, " ")[1])
-			if x-1 <= cycleNo%40 && cycleNo%40 <= x+1 {
-				crtLine[cycleNo%40] = '#'
-			} else {
-				crtLine[cycleNo%40] = '.'
-			}
-			cycleNo++
-			if cycleNo%40 == 0 {
-				result = append(result, string(crtLine))
-				crtLine = make([]rune, 40)
-			}
-			if x-1 <= cycleNo%40 && cycleNo%40 <= x+1 {
-				crtLine[cycleNo%40] = '#'
-			} else {
-				crtLine[cycleNo%40] = '.'
-			}
-			cycleNo++
-			if cycleNo%40 == 0 {
-				result = append(result, string(crtLine))
-				crtLine = make([]rune, 40)
-			}
+			cycleNo, crtScreen = part2Cycle(x, cycleNo, crtLine, crtScreen)
+			cycleNo, crtScreen = part2Cycle(x, cycleNo, crtLine, crtScreen)
 			x += val
 		}
 	}
 
-	return result
+	return crtScreen
+}
+
+func part2Cycle(x int, cycleNo int, crtLine []rune, crtScreen []string) (int, []string) {
+	drawPixel(x, cycleNo, crtLine)
+	cycleNo++
+	crtScreen = checkIfAddCrtLine(cycleNo, crtScreen, crtLine)
+
+	return cycleNo, crtScreen
+}
+
+func initCrtLine(crtLine []rune) {
+	for i := 0; i < len(crtLine); i++ {
+		crtLine[i] = '.'
+	}
+}
+
+func drawPixel(x int, cycleNo int, crtLine []rune) {
+	if x-1 <= cycleNo%40 && cycleNo%40 <= x+1 {
+		crtLine[cycleNo%40] = '#'
+	}
+}
+
+func checkIfAddCrtLine(cycleNo int, crtScreen []string, crtLine []rune) []string {
+	if cycleNo%40 == 0 {
+		crtScreen = append(crtScreen, string(crtLine))
+		initCrtLine(crtLine)
+	}
+
+	return crtScreen
 }
