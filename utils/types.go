@@ -2,7 +2,6 @@ package utils
 
 import (
 	"log"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -10,10 +9,6 @@ import (
 type Point struct {
 	X int
 	Y int
-}
-
-func (p Point) Distance(o Point) int {
-	return int(math.Sqrt(float64(((p.X - o.X) ^ 2) + ((p.Y - o.Y) * 2))))
 }
 
 func (p Point) Copy() Point {
