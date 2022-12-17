@@ -18,11 +18,7 @@ func (Puzzle) Solve() {
 }
 
 func solvePart1(lines []string) int {
-	monkeys := make([]monkey, 0)
-	for i := 0; i < len(lines); i = i + 7 {
-		m := parseMonkey(lines[i : i+7])
-		monkeys = append(monkeys, m)
-	}
+	monkeys := parseMonkeys(lines)
 
 	for i := 0; i < 20; i++ {
 		for monkeyIdx := range monkeys {
@@ -30,13 +26,13 @@ func solvePart1(lines []string) int {
 			for _, item := range m.items {
 				item = m.operation.do(item)
 				item /= 3
-				var newMonkey int
+				var throwTo int
 				if item%m.test == 0 {
-					newMonkey = m.trueMonkey
+					throwTo = m.trueMonkey
 				} else {
-					newMonkey = m.falseMonkey
+					throwTo = m.falseMonkey
 				}
-				monkeys[newMonkey].items = append(monkeys[newMonkey].items, item)
+				monkeys[throwTo].items = append(monkeys[throwTo].items, item)
 				m.items = m.items[1:]
 				m.itemsInspected++
 			}
@@ -57,11 +53,7 @@ func solvePart1(lines []string) int {
 }
 
 func solvePart2(lines []string) int {
-	monkeys := make([]monkey, 0)
-	for i := 0; i < len(lines); i = i + 7 {
-		m := parseMonkey(lines[i : i+7])
-		monkeys = append(monkeys, m)
-	}
+	monkeys := parseMonkeys(lines)
 
 	modulus := 1
 	for _, m := range monkeys {
@@ -74,13 +66,13 @@ func solvePart2(lines []string) int {
 			for _, item := range m.items {
 				item = m.operation.do(item)
 				item %= modulus
-				var newMonkey int
+				var throwTo int
 				if item%m.test == 0 {
-					newMonkey = m.trueMonkey
+					throwTo = m.trueMonkey
 				} else {
-					newMonkey = m.falseMonkey
+					throwTo = m.falseMonkey
 				}
-				monkeys[newMonkey].items = append(monkeys[newMonkey].items, item)
+				monkeys[throwTo].items = append(monkeys[throwTo].items, item)
 				m.items = m.items[1:]
 				m.itemsInspected++
 			}
@@ -100,6 +92,15 @@ func solvePart2(lines []string) int {
 	return topTwo[0] * topTwo[1]
 }
 
+func parseMonkeys(lines []string) []monkey {
+	monkeys := make([]monkey, 0)
+	for i := 0; i < len(lines); i = i + 7 {
+		m := newMonkey(lines[i : i+7])
+		monkeys = append(monkeys, m)
+	}
+	return monkeys
+}
+
 type monkey struct {
 	items          []int
 	operation      operation
@@ -109,7 +110,7 @@ type monkey struct {
 	itemsInspected int
 }
 
-func parseMonkey(lines []string) monkey {
+func newMonkey(lines []string) monkey {
 	var op operation
 	var test int
 	var trueMonkey int
@@ -135,7 +136,7 @@ func parseOperation(o string) operation {
 	if o == "* old" {
 		return operation{"^", 0}
 	}
-	
+
 	e := strings.Split(o, " ")
 
 	return operation{e[0], utils.ToInt(e[1])}
