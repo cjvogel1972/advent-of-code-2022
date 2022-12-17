@@ -1,16 +1,19 @@
 package day13
 
 import (
+	"advent-of-code-2022/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-var lines = []string{}
-
 func TestPart1(t *testing.T) {
-	assert.Equal(t, 0, solvePart1(lines))
+	lines := utils.ReadLines("day13_test-input.txt")
+
+	assert.Equal(t, 13, solvePart1(lines))
 }
 
 func TestPart2(t *testing.T) {
-	assert.Equal(t, 0, solvePart2(lines))
+	lines := utils.ReadLines("day13_test-input.txt")
+
+	assert.Equal(t, 140, solvePart2(lines))
 }
