@@ -21,8 +21,8 @@ func TestNew(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			r := New(tt.a, tt.b)
-			assert.Equal(t, tt.start, r.start)
-			assert.Equal(t, tt.end, r.end)
+			assert.Equal(t, tt.start, r.Start)
+			assert.Equal(t, tt.end, r.End)
 		})
 	}
 }

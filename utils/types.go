@@ -11,6 +11,10 @@ type Point struct {
 	Y int
 }
 
+func (p Point) ManhattanDistance(p2 Point) int {
+	return Abs(p.X-p2.X) + Abs(p.Y-p2.Y)
+}
+
 func (p Point) Copy() Point {
 	return Point{p.X, p.Y}
 }
@@ -53,4 +57,12 @@ func Max(a int, b int) int {
 		return a
 	}
 	return b
+}
+
+// Abs returns the absolute value of the given number
+func Abs(a int) int {
+	if a < 0 {
+		return -a
+	}
+	return a
 }
